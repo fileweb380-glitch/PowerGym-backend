@@ -1,7 +1,7 @@
 const express  = require('express')
 const router   = express.Router()
 const protect  = require('../Middleware/authMiddleware')
-const User     = require('../models/User')
+const User     = require('../Models/User')
 
 // ════════════════════════════════════
 // GET /api/user/me  — get logged-in user profile
