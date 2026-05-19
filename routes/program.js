@@ -1,7 +1,7 @@
 const express       = require('express')
 const router        = express.Router()
-const protect       = require('../middleware/authMiddleware')
-const WeeklyProgram = require('../models/WeeklyProgram')
+const protect       = require('../Middleware/authMiddleware')
+const WeeklyProgram = require('../Models/WeeklyProgram')
 
 // ════════════════════════════════════
 // GET /api/program  — get user's weekly program
