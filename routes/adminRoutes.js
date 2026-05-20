@@ -48,12 +48,12 @@ router.put('/payment/:id', async (req, res) => {
 
     }
 
-    user.paymentStatus = 'Approved'
+    user.paymentStatus = 'Paid'
 
     await user.save()
 
     res.json({
-      message: 'Payment Approved'
+      message: 'Payment Paid'
     })
 
   } catch (error) {
