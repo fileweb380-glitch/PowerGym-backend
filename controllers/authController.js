@@ -1,7 +1,10 @@
 const User = require('../Models/User')
+
 const bcrypt = require('bcryptjs')
+
 const jwt = require('jsonwebtoken')
 
+// REGISTER
 const registerUser = async (req, res) => {
 
   try {
@@ -32,6 +35,7 @@ const registerUser = async (req, res) => {
 
     }
 
+    // TELEBIRR CHECK
     if (paymentMethod === 'telebirr') {
 
       if (
@@ -47,18 +51,24 @@ const registerUser = async (req, res) => {
 
     }
 
+    // HASH PASSWORD
     const hashedPassword = await bcrypt.hash(
       password,
       10
     )
 
+    // PAYMENT STATUS
     let paymentStatus = 'Pending'
 
     if (paymentMethod === 'telebirr') {
-      paymentStatus = 'Completed'
+
+      paymentStatus = 'Paid'
+
     }
 
+    // CREATE USER
     const user = await User.create({
+
       firstName,
       lastName,
       phone,
@@ -71,22 +81,32 @@ const registerUser = async (req, res) => {
       paymentMethod,
       transactionId,
       paymentStatus
+
     })
 
+    // TOKEN
     const token = jwt.sign(
+
       {
         id: user._id
       },
+
       process.env.JWT_SECRET,
+
       {
         expiresIn: '7d'
       }
+
     )
 
     res.status(201).json({
+
       message: 'Registration Successful',
+
       token,
+
       user
+
     })
 
   } catch (error) {
@@ -99,6 +119,7 @@ const registerUser = async (req, res) => {
 
 }
 
+// LOGIN
 const loginUser = async (req, res) => {
 
   try {
@@ -120,6 +141,7 @@ const loginUser = async (req, res) => {
 
     }
 
+    // PASSWORD CHECK
     const isMatch = await bcrypt.compare(
       password,
       user.password
@@ -133,20 +155,29 @@ const loginUser = async (req, res) => {
 
     }
 
+    // TOKEN
     const token = jwt.sign(
+
       {
         id: user._id
       },
+
       process.env.JWT_SECRET,
+
       {
         expiresIn: '7d'
       }
+
     )
 
     res.status(200).json({
+
       message: 'Login Successful',
+
       token,
+
       user
+
     })
 
   } catch (error) {

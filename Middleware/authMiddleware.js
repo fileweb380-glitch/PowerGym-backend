@@ -1,32 +1,71 @@
 const jwt = require('jsonwebtoken')
+
 const User = require('../Models/User')
 
-module.exports = async function protect(req, res, next) {
-  const authHeader = req.headers.authorization
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({
-      message: 'No token. Authorization denied.',
-    })
-  }
-
-  const token = authHeader.split(' ')[1]
+// PROTECT ROUTE
+const protect = async (req, res, next) => {
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-    req.user = await User.findById(decoded.id).select('-password')
+    let token
 
-    if (!req.user) {
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith('Bearer')
+    ) {
+
+      token = req.headers.authorization.split(' ')[1]
+
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET
+      )
+
+      req.user = await User.findById(
+        decoded.id
+      ).select('-password')
+
+      next()
+
+    } else {
+
       return res.status(401).json({
-        message: 'User not found.',
+        message: 'No Token'
       })
+
     }
 
-    next()
-  } catch (err) {
+  } catch (error) {
+
     return res.status(401).json({
-      message: 'Invalid token.',
+      message: 'Token Failed'
     })
+
   }
+
+}
+
+// ADMIN ONLY
+const adminOnly = (req, res, next) => {
+
+  if (
+    req.user &&
+    req.user.isAdmin
+  ) {
+
+    next()
+
+  } else {
+
+    return res.status(403).json({
+      message: 'Admin Only'
+    })
+
+  }
+
+}
+
+module.exports = {
+  protect,
+  adminOnly
 }

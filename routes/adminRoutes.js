@@ -4,68 +4,87 @@ const router = express.Router()
 
 const User = require('../Models/User')
 
-// ─────────────────────────────
-// GET ALL USERS
-// ─────────────────────────────
+const {
+  protect,
+  adminOnly
+} = require('../middleware/authMiddleware')
 
-router.get('/users', async (req, res) => {
+// GET USERS
+router.get(
 
-  try {
+  '/users',
 
-    const users = await User.find()
+  protect,
 
-    res.json(users)
+  adminOnly,
 
-  } catch (error) {
+  async (req, res) => {
 
-    console.log(error)
+    try {
 
-    res.status(500).json({
-      message: 'Server Error'
-    })
+      const users = await User.find()
 
-  }
+      res.json(users)
 
-})
+    } catch (error) {
 
-// ─────────────────────────────
-// APPROVE PAYMENT
-// ─────────────────────────────
+      console.log(error)
 
-router.put('/payment/:id', async (req, res) => {
-
-  try {
-
-    const user = await User.findById(
-      req.params.id
-    )
-
-    if (!user) {
-
-      return res.status(404).json({
-        message: 'User not found'
+      res.status(500).json({
+        message: 'Server Error'
       })
 
     }
 
-    user.paymentStatus = 'Paid'
+  }
 
-    await user.save()
+)
 
-    res.json({
-      message: 'Payment Paid'
-    })
+// APPROVE PAYMENT
+router.put(
 
-  } catch (error) {
+  '/payment/:id',
 
-    console.log(error)
+  protect,
 
-    res.status(500).json({
-      message: 'Server Error'
-    })
+  adminOnly,
+
+  async (req, res) => {
+
+    try {
+
+      const user = await User.findById(
+        req.params.id
+      )
+
+      if (!user) {
+
+        return res.status(404).json({
+          message: 'User not found'
+        })
+
+      }
+
+      user.paymentStatus = 'Paid'
+
+      await user.save()
+
+      res.json({
+        message: 'Payment Approved'
+      })
+
+    } catch (error) {
+
+      console.log(error)
+
+      res.status(500).json({
+        message: 'Server Error'
+      })
+
+    }
 
   }
 
-})
+)
 
 module.exports = router

@@ -61,6 +61,11 @@ const userSchema = new mongoose.Schema({
   paymentStatus: {
     type: String,
     default: 'Pending'
+  },
+
+  isAdmin: {
+    type: Boolean,
+    default: false
   }
 
 }, { timestamps: true })
