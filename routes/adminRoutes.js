@@ -7,7 +7,7 @@ const User = require('../Models/User')
 const {
   protect,
   adminOnly
-} = require('../middleware/authMiddleware')
+} = require('../Middleware/authMiddleware')
 
 // GET USERS
 router.get(
