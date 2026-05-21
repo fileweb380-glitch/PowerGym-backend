@@ -4,20 +4,10 @@ const router = express.Router()
 
 const User = require('../Models/User')
 
-const {
-  protect,
-  adminOnly
-} = require('../Middleware/authMiddleware')
+const { protect, adminOnly } = require('../Middleware/authMiddleware')
 
 // GET USERS
-router.get(
-
-  '/users',
-
-  protect,
-
-  adminOnly,
-
+router.get('/users', protect, adminOnly,
   async (req, res) => {
 
     try {
